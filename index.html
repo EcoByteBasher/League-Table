@@ -124,7 +124,7 @@
         return { text, offline: false };
       } catch (err) {
         // If network fails, try cache via service worker
-        const cache = await caches.open("zwift-cache-v2");
+        const cache = await caches.open("zwift-cache-v3");
         const cachedResponse = await cache.match(url);
         if (cachedResponse) {
           const text = await cachedResponse.text();
