@@ -1,0 +1,16 @@
+{
+  "name": "RMACC Zwift Club",
+  "short_name": "Zwift League",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#008000",
+  "icons": [
+    {
+      "src": "rmacc-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+
