@@ -1,6 +1,6 @@
 {
-  "name": "RMACC Zwift Club",
-  "short_name": "Zwift League",
+  "name": "RMACC Zwift League",
+  "short_name": "RMACC Zwift",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",

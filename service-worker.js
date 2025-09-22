@@ -1,5 +1,5 @@
 const CACHE_NAME = "zwift-cache-v2";
-const OFFLINE_URLS = ["/", "/index.html", "/manifest.json", "/rmacc-logo.png"];
+const OFFLINE_URLS = ["/", "/index.html", "/manifest.json", "/rmacc-192.png", "/rmacc-512.png", "/ios-rmacc-512.png"];
 
 // On install: cache static assets
 self.addEventListener("install", event => {
