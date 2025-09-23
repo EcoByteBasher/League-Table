@@ -168,13 +168,13 @@
 
         if (i === 0) {
           tr.classList.add("gold");
-          tr.lastChild.innerHTML += ' <span class="cup-icon">🏆</span>';
+          tr.firstChild.innerHTML += ' <span class="cup-icon">🏆</span>';
         } else if (i === 1) {
           tr.classList.add("silver");
-          tr.lastChild.innerHTML += ' <span class="cup-icon">🥈</span>';
+          tr.firstChild.innerHTML += ' <span class="cup-icon">🥈</span>';
         } else if (i === 2) {
           tr.classList.add("bronze");
-          tr.lastChild.innerHTML += ' <span class="cup-icon">🥉</span>';
+          tr.firstChild.innerHTML += ' <span class="cup-icon">🥉</span>';
         }
 
         table.appendChild(tr);
