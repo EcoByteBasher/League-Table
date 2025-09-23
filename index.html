@@ -17,64 +17,78 @@
       align-items: center;
       padding: 1rem;
     }
+
     header {
       width: 100%;
       display: flex;
       align-items: center;
       margin-bottom: 1rem;
     }
+
     header img {
       height: 60px;
       margin-right: 1rem;
     }
+
     h1 {
       color: green;
       font-size: 2rem;
       margin: 0;
     }
+
     h2 {
       color: orange;
       font-size: 0.95rem;
       margin: 0;
       line-height: 1.2;
     }
+
     table {
       border-collapse: collapse;
       width: 100%;
       max-width: 800px;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 0.5rem;
       text-align: left;
     }
+
     tr:nth-child(odd) {
       background-color: #f9f9f9;
     }
-    .gold {
-      background-color: #ffd700 !important;
-      font-weight: bold;
-    }
-    .silver {
-      background-color: #c0c0c0 !important;
-      font-weight: bold;
-    }
-    .bronze {
-      background-color: #cd7f32 !important;
-      font-weight: bold;
-    }
-    .cup-icon {
-      margin-right: 0.4rem;
-      font-size: 1.2rem;
-    }
-    .nowrap {
-      white-space: nowrap;
-      display: inline-block;
-    }
+
     .table-container {
       overflow-x: auto;
       width: 100%;
     }
+
+    .gold {
+      background-color: #ffd700 !important;
+      font-weight: bold;
+    }
+
+    .silver {
+      background-color: #c0c0c0 !important;
+      font-weight: bold;
+    }
+
+    .bronze {
+      background-color: #cd7f32 !important;
+      font-weight: bold;
+    }
+
+    .cup-icon {
+      margin-right: 0.4rem;
+      font-size: 1.2rem;
+    }
+
+    .nowrap {
+      white-space: nowrap;
+      display: inline-block;
+    }
+
     .alert {
       position: relative;
       padding: 0.75rem 2rem 0.75rem 1rem;
@@ -82,16 +96,19 @@
       border-radius: 0.5rem;
       font-weight: bold;
     }
+
     .alert.offline {
       background-color: #fff3cd;
       color: #856404;
       border: 1px solid #ffeeba;
     }
+
     .alert.error {
       background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
+
     .alert .close-btn {
       position: absolute;
       top: 0.25rem;
@@ -115,20 +132,21 @@
   </header>
 
   <div class="table-container">
-    <table id="league-table"></table>
+    <table id="league-table">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvMGtivAFG2JeOcYqEq_kNW9dpT9CIYoJOcRu62xdHR1j2QzTjNRiz3FKkGcPHWkWS43djnM_Iu-kj/pub?output=csv"
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvMGtivAFG2JeOcYqEq_kNW9dpT9CIYoJOcRu62xdHR1j2QzTjNRiz3FKkGcPHWkWS43djnM_Iu-kj/pub?output=csv";
 
     async function fetchCSV(url) {
       try {
-        // Always try the network first
         const res = await fetch(url);
         const text = await res.text();
         return { text, offline: false };
       } catch (err) {
-        // If network fails, try cache via service worker
         const cache = await caches.open("zwift-cache-v3");
         const cachedResponse = await cache.match(url);
         if (cachedResponse) {
@@ -141,13 +159,15 @@
     }
 
     function parseCSV(text) {
-      const rows = text.trim().split(/\r?\n/).map(r => r.split(","));
-      return rows;
+      return text.trim().split(/\r?\n/).map(r => r.split(","));
     }
 
     function renderTable(data) {
       const table = document.getElementById("league-table");
-      table.innerHTML = "";
+      const thead = table.querySelector("thead");
+      const tbody = table.querySelector("tbody");
+      thead.innerHTML = "";
+      tbody.innerHTML = "";
 
       const headerRow = document.createElement("tr");
       data[0].forEach(h => {
@@ -155,7 +175,7 @@
         th.textContent = h;
         headerRow.appendChild(th);
       });
-      table.appendChild(headerRow);
+      thead.appendChild(headerRow);
 
       let rows = data.slice(1);
       const pointsIndex = data[0].findIndex(h => /points/i.test(h));
@@ -182,46 +202,35 @@
           tr.firstChild.innerHTML = '<span class="nowrap"><span class="cup-icon">🥉</span>' + tr.firstChild.textContent + '</span>';
         }
 
-        table.appendChild(tr);
+        tbody.appendChild(tr);
       });
     }
 
     function showMessage(msg, type = "error") {
       const container = document.querySelector(".table-container");
-
-      // Remove existing alerts first
       container.querySelectorAll(".alert").forEach(el => el.remove());
-
       const msgDiv = document.createElement("div");
       msgDiv.classList.add("alert", type);
-
       const textSpan = document.createElement("span");
       textSpan.textContent = msg;
-
       const closeBtn = document.createElement("button");
       closeBtn.classList.add("close-btn");
       closeBtn.innerHTML = "✖";
       closeBtn.onclick = () => msgDiv.remove();
-
       msgDiv.appendChild(textSpan);
       msgDiv.appendChild(closeBtn);
-
       container.prepend(msgDiv);
     }
 
-    // Load data
     fetchCSV(CSV_URL)
       .then(({ text, offline }) => {
         renderTable(parseCSV(text));
-        if (offline) {
-          showMessage("⚠️ Offline mode: showing last saved table.", "offline");
-        }
+        if (offline) showMessage("⚠️ Offline mode: showing last saved table.", "offline");
       })
       .catch(() => {
         showMessage("❌ No data available. Please connect to the internet.", "error");
       });
 
-    // Register service worker for PWA
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
