@@ -64,11 +64,12 @@
       font-weight: bold;
     }
     .cup-icon {
-      margin-right: 0.5rem;
+      margin-right: 0.4rem;
       font-size: 1.2rem;
     }
     .nowrap {
       white-space: nowrap;
+      display: inline-block;
     }
     .table-container {
       overflow-x: auto;
@@ -172,13 +173,13 @@
 
         if (i === 0) {
           tr.classList.add("gold");
-          tr.firstChild.innerHTML = '<span class="cup-icon">🏆</span> <span class="nowrap">' + tr.firstChild.textContent + '</span>';
+          tr.firstChild.innerHTML = '<span class="nowrap"><span class="cup-icon">🏆</span>' + tr.firstChild.textContent + '</span>';
         } else if (i === 1) {
           tr.classList.add("silver");
-          tr.firstChild.innerHTML = '<span class="cup-icon">🥈</span> <span class="nowrap">' + tr.firstChild.textContent + '</span>';
+          tr.firstChild.innerHTML = '<span class="nowrap"><span class="cup-icon">🥈</span>' + tr.firstChild.textContent + '</span>';
         } else if (i === 2) {
           tr.classList.add("bronze");
-          tr.firstChild.innerHTML = '<span class="cup-icon">🥉</span> <span class="nowrap">' + tr.firstChild.textContent + '</span>';
+          tr.firstChild.innerHTML = '<span class="nowrap"><span class="cup-icon">🥉</span>' + tr.firstChild.textContent + '</span>';
         }
 
         table.appendChild(tr);
