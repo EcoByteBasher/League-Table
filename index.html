@@ -43,52 +43,49 @@
       line-height: 1.2;
     }
 
+    /* Green button */
+    .rules-btn {
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      margin: 1rem 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .rules-btn:hover {
+      background-color: #006400; /* darker green */
+    }
+
+    /* Table */
     table {
       border-collapse: collapse;
       width: 100%;
       max-width: 800px;
     }
-
     th, td {
       border: 1px solid #ccc;
       padding: 0.5rem;
       text-align: left;
     }
-
     tr:nth-child(odd) {
       background-color: #f9f9f9;
     }
-
     .table-container {
       overflow-x: auto;
       width: 100%;
     }
 
-    .gold {
-      background-color: #ffd700 !important;
-      font-weight: bold;
-    }
+    /* Highlight rows */
+    .gold { background-color: #ffd700 !important; font-weight: bold; }
+    .silver { background-color: #c0c0c0 !important; font-weight: bold; }
+    .bronze { background-color: #cd7f32 !important; font-weight: bold; }
+    .cup-icon { margin-right: 0.4rem; font-size: 1.2rem; }
+    .nowrap { white-space: nowrap; display: inline-block; }
 
-    .silver {
-      background-color: #c0c0c0 !important;
-      font-weight: bold;
-    }
-
-    .bronze {
-      background-color: #cd7f32 !important;
-      font-weight: bold;
-    }
-
-    .cup-icon {
-      margin-right: 0.4rem;
-      font-size: 1.2rem;
-    }
-
-    .nowrap {
-      white-space: nowrap;
-      display: inline-block;
-    }
-
+    /* Alerts */
     .alert {
       position: relative;
       padding: 0.75rem 2rem 0.75rem 1rem;
@@ -96,19 +93,16 @@
       border-radius: 0.5rem;
       font-weight: bold;
     }
-
     .alert.offline {
       background-color: #fff3cd;
       color: #856404;
       border: 1px solid #ffeeba;
     }
-
     .alert.error {
       background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
-
     .alert .close-btn {
       position: absolute;
       top: 0.25rem;
@@ -119,6 +113,50 @@
       color: inherit;
       background: none;
       border: none;
+    }
+
+    /* Modal (popup) */
+    .modal {
+      display: none; /* hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: 1rem;
+      max-width: 600px;
+      width: 90%;
+      border-radius: 8px;
+      text-align: left;
+      position: relative;
+
+      /* NEW: make modal scrollable if content is long */
+      max-height: 80vh;    /* take up at most 80% of viewport height */
+      overflow-y: auto;    /* scroll inside the modal if too tall */
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      color: green;
+    }
+    .modal-close {
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      float: right;
+    }
+    .modal-close:hover {
+      background: #006400;
     }
   </style>
 </head>
@@ -131,6 +169,27 @@
     </div>
   </header>
 
+  <!-- New Rules button -->
+  <button class="rules-btn" id="rulesBtn">Rules &amp; points</button>
+
+  <!-- Modal structure -->
+  <div class="modal" id="rulesModal">
+    <div class="modal-content">
+      <h3>Rules &amp; Points</h3>
+      <p>
+        <!-- Replace this text with your real rules -->
+        Add the details of the competition rules, points system,
+        and any other information for riders. If the text is long, this area
+        will scroll while keeping the modal within the screen.
+      </p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget varius libero. Suspendisse potenti. Mauris malesuada, lorem quis hendrerit volutpat, magna sapien sodales eros, eget faucibus est sapien vitae nunc.</p>
+      <p>Aliquam erat volutpat. Quisque vehicula odio at lorem faucibus, vel ultrices mi tincidunt. Nulla vel luctus mi, et sagittis eros. Phasellus semper lacus nec nunc viverra, nec interdum nulla malesuada.</p>
+      <p>... (add as much as you need, this area will scroll internally) ...</p>
+
+      <button class="modal-close" id="closeModal">Close</button>
+    </div>
+  </div>
+
   <div class="table-container">
     <table id="league-table">
       <thead></thead>
@@ -139,8 +198,6 @@
   </div>
 
   <script>
-    const TEST_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvMGtivAFG2JeOcYqEq_kNW9dpT9CIYoJOcRu62xdHR1j2QzTjNRiz3FKkGcPHWkWS43djnM_Iu-kj/pub?output=csv";
-
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVnw2KKM6Nq2GdqNgQsDB6kt_pEKW5wzPXg_hyljv7At5-mhVULozttX6BDj98EQ/pub?gid=1326660133&single=true&output=csv";
 
     async function fetchCSV(url) {
@@ -236,6 +293,15 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js");
     }
+
+    // Modal logic
+    const modal = document.getElementById("rulesModal");
+    const btn = document.getElementById("rulesBtn");
+    const closeBtn = document.getElementById("closeModal");
+
+    btn.onclick = () => { modal.style.display = "flex"; };
+    closeBtn.onclick = () => { modal.style.display = "none"; };
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
   </script>
 </body>
 </html>
